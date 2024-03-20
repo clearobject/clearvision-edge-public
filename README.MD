@@ -28,6 +28,54 @@ The values.yaml file contains configuration settings for the ClearVision@theEdge
 - `cameras`: An array that could be used to configure camera inputs, currently empty.
 - `config`: Contains further configuration settings, which includes ClearVision@theEdge application settings, performance tuning parameters, or environment-specific overrides.
 
+### Configuration File Overview
+
+- `version`: Specifies the configuration version.
+- `livenessLoggingEnabled`: Indicates whether health signals log to PLC (Programmable Logic Controller).
+- `deviceName`: Name of the device used in CV Hub and PubSub.
+- `templates`: Section for defining reusable snippets of configuration.
+
+#### Logging
+
+Defines the logging levels for different components of the system:
+
+- `pipeline`, `preprocess`, `postprocess`: Logging levels for different stages of the data processing pipeline.
+- `azureIOT`, `azureEventHub`, `plc`, `googlePubsub`, `snap7`, `googleCloud`, `streamer`, `rabbit`: Logging levels for various services and protocols used.
+
+#### Image Capture
+
+Configuration for capturing and storing images, split into `active` and `passive` categories:
+
+- `azure`, `google`, `file`: Storage options for images, each with settings like `enabled`, `uploadMaxFPS`, `uploadPrefix`, etc.
+
+#### Inference Logging
+
+Settings for logging inference results, including configurations for different services like RabbitMQ, Azure Event Hub, Azure IoT Hub, and Google Cloud PubSub.
+
+#### Streaming
+
+Configuration for streaming video feed results, including settings for framerate, scaling, and hardware encoding.
+
+#### Sources
+
+Defines the input sources for the system, such as files, cameras, or video streams:
+
+- Each source type (`files`, `vimba`, `aravis`, `rtsp`, `cognex`) has specific settings like `enabled`, `width`, `height`, `directory`, `cameraID`, etc.
+
+#### Preprocess
+
+Settings for image preprocessing before model inference, including `preprocessWidth` and `preprocessHeight`.
+
+#### Inference
+
+Configuration for the inference engine, detailing various models and their settings:
+
+- Each inference type (`segmentation`, `objectDetection`, `classification`) has its own configuration block, including settings for model files, engine files, network modes, and other parameters specific to the inference type.
+
+#### Additional Notes
+
+- The configuration file contains detailed settings for how the system captures, processes, logs, and streams data.
+- Each section is critical for tailoring the system to specific operational needs and integration with various storage, logging, and processing services.
 
 #### Deploy 
 
