@@ -1,0 +1,17 @@
+##########################################################################
+#  Copyright 2024 ClearObject, Inc. All Rights Reserved.                 #
+#  You may not use, distribute, or modify this code unless otherwise     #
+#  specified in a mutually agreed upon license agreement between you     #
+#  and ClearObject, Inc.                                                 #
+##########################################################################
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: i7e-config
+data:
+  config.yaml: |
+{{ toYaml .Values.i7e.config | indent 4 }}
+{{ range $camera := .Values.i7e.cameras }}
+  {{ $camera.name }}.xml: |
+{{ $camera.vimbaXML | indent 4 }}
+{{ end }}

@@ -1,0 +1,863 @@
+i7e:
+  image: us-east4-docker.pkg.dev/clearvision-edge-prod/docker-cve-prod/i7e-app:4.0.3
+  imagePullPolicy: IfNotPresent
+  hostNetwork: true
+  serviceAccountJSON: null
+  gpuLimit: true
+  cameras: []
+  config:
+    ################################################################################
+    #  Copyright 2024 ClearObject, Inc. All Rights Reserved.                       #
+    #  You may not use, distribute, or modify this code unless otherwise           #
+    #  specified in a mutually agreed upon license agreement between you           #
+    #  and ClearObject, Inc.                                                       #
+    ################################################################################
+    #                               _ _____                                        #
+    #                              (_)___  |__                                     #
+    #                              | |  / / _ \                                    #
+    #                              | | / /  __/                                    #
+    #                              |_|/_/ \___|                                    #
+    #                                                                              #
+    #                          _                               __ _                #
+    #      _ __ ___   __ _ ___| |_ ___ _ __    ___ ___  _ __  / _(_) __ _          #
+    #     | '_ ` _ \ / _` / __| __/ _ \ '__|  / __/ _ \| '_ \| |_| |/ _` |         #
+    #     | | | | | | (_| \__ \ ||  __/ |    | (_| (_) | | | |  _| | (_| |         #
+    #     |_| |_| |_|\__,_|___/\__\___|_|     \___\___/|_| |_|_| |_|\__, |         #
+    #                                                               |___/          #
+    #                                                                              #
+    ################################################################################
+
+    ################################################################################
+    #                         Config Version: 4.0.0                                #
+    ################################################################################
+
+    ### NOTE #######################################################################
+    # The below configuration parameters have a significant impact on the ability  #
+    # for the pipeline to operate as intended.                                     #
+    # It is important to understand the configuration and the valid values         #
+    # for each variable.                                                           #
+    ################################################################################
+
+    #### Master Config ####
+
+    # Configuration version.
+    version: 4.0.3
+    # Strictly for clients with PLC health monitoring logging requirements.
+    # true = Health signals log to PLC.
+    livenessLoggingEnabled: false
+    # Device Name that will be supplied to CV Hub and PubSub. Simple string value.
+    deviceName: Unknown
+    # Free-form yaml for information not used by application.  Useful for anchors, aliases, merge keys.
+    templates:
+      reusable-thing: &REUSABLE_THING
+        someKey: someValue
+        someOtherKey: someOtherValue
+    # Logging levels. Acceptable values are DEBUG, INFO, WARN, CRITICAL.
+    logging:
+      pipeline: INFO
+      preprocess: INFO
+      postprocess: INFO
+      # Optional override for logging just postprocess results.
+      # If omitted, results are logged according to 'postprocess' setting.
+      postprocessResults: DEBUG
+      azureIOT: INFO
+      azureEventHub: INFO
+      plc: INFO
+      googlePubsub: INFO
+      snap7: INFO
+      googleCloud: WARN
+      streamer: INFO
+      rabbit: INFO
+    # Configuration for storing captured raw frames.
+    # May optionally have separate parent keys for active and passive.
+    # NOTE: You MUST enable at least one config in BOTH active and passive.
+    imageCapture:
+      # Configuration for captures NOT triggered by inference results.
+      passive:
+        # Configuration for Azure Blob Storage
+        azure:
+          # Boolean or time window to determine if Azure Blob Storage is Used.
+          enabled: false
+          # This Integer value represents the maximum rate of frames stored to the
+          # uploadPrefix. (i.e. 2=2 frames stored per second)
+          uploadMaxFPS: 5
+          # The location within the container where images for training are stored.
+          uploadPrefix: i7e-uploads/{device_name}/passive
+          # The Azure Storage Account Name.
+          accountName: xxxxxxxxxxxxxx
+          # The Azure Blob Storage Container Name.
+          containerName: container1
+          # Optional access key if not passed in the environment.
+          # accessKey: xxxxxxxxx
+          # Optional filename format, defaults to iso format.
+          # dateTimeFormat: "%Y/%m/%d/%H/%Y-%m-%dT%H:%M:%S.%f"
+        # Configuration for Google Cloud Storage
+        google:
+          # Boolean or time window to determine if Google Cloud Storage is Used.
+          enabled: true
+            # # Time window start.
+            # start: 08:00:00
+            # # Time window end.
+            # end: 18:00:00
+            # # Timezone, any value known to pytz.timezone.
+          # timezone: "US/Eastern"
+          # This Integer value represents the maximum rate of frames stored to the
+          # uploadPrefix. (i.e. 2=2 frames stored per second)
+          uploadMaxFPS: 5
+          # The location within the bucket where images for training are stored.
+          uploadPrefix: "{device_name}/passive"
+          # The name of the Google Cloud Storage Bucket.
+          bucketName: clearvision-edge-prod-upload
+          # Optional base64-encoded json credentials file if not passed in the environment.
+          # credentials: xxxxxxx
+          # Optional filename format, defaults to iso format.
+          # dateTimeFormat: "%Y/%m/%d/%H/%Y-%m-%dT%H:%M:%S.%f"
+        # Configuration for Local File Storage.
+        # NOTE: When running in docker, be sure to use a mounted volume or bind mount.
+        file:
+          # Boolean or time window to determine if Local File Storage is Used.
+          enabled: false
+          # This Integer value represents the maximum rate of frames stored to the
+          # uploadPrefix. (i.e. 2=2 frames stored per second)
+          uploadMaxFPS: 5
+          # The location where images for training are stored.
+          uploadPrefix: /var/spool/i7e-uploads/passive
+          # Optional filename format, defaults to iso format.
+          # dateTimeFormat: "%Y/%m/%d/%H/%Y-%m-%dT%H:%M:%S.%f"
+          # The optional maximum storage to use, in bytes, before overwriting older files.
+          maxSize: 67108864
+      # Configuration for captures triggered by inference results.
+      active:
+        # Configuration for Azure Blob Storage
+        azure:
+          # Boolean or time window to determine if Azure Blob Storage is Used.
+          enabled: false
+          # This Integer value represents the maximum rate of frames stored to the
+          # uploadPrefix. (i.e. 2=2 frames stored per second)
+          uploadMaxFPS: 5
+          # The location within the container where images for training are stored.
+          uploadPrefix: i7e-uploads/{device_name}/active
+          # The Azure Storage Account Name.
+          accountName: xxxxxxxxxxxxxx
+          # The Azure Blob Storage Container Name.
+          containerName: container1
+          # Optional filename format, defaults to iso format.
+          # dateTimeFormat: "%Y/%m/%d/%H/%Y-%m-%dT%H:%M:%S.%f"
+        # Configuration for Google Cloud Storage
+        google:
+          # Boolean or time window to determine if Google Cloud Storage is Used.
+          enabled: false
+            # # Time window start.
+            # start: 08:00:00
+            # # Time window end.
+            # end: 18:00:00
+            # # Timezone, any value known to pytz.timezone.
+          # timezone: "US/Eastern"
+          # This Integer value represents the maximum rate of frames stored to the
+          # uploadPrefix. (i.e. 2=2 frames stored per second)
+          uploadMaxFPS: 5
+          # The location within the bucket where images for training are stored.
+          uploadPrefix: "{device_name}/active"
+          # The name of the Google Cloud Storage Bucket.
+          bucketName: clearvision-edge-prod-upload
+          # Optional base64-encoded json credentials file if not passed in the environment.
+          # credentials: xxxxxxx
+          # Optional filename format, defaults to iso format.
+          # dateTimeFormat: "%Y/%m/%d/%H/%Y-%m-%dT%H:%M:%S.%f"
+        # Configuration for Local File Storage.
+        # NOTE: When running in docker, be sure to use a mounted volume or bind mount.
+        file:
+          # Boolean or time window to determine if Local File Storage is Used.
+          enabled: false
+          # This Integer value represents the maximum rate of frames stored to the
+          # uploadPrefix. (i.e. 2=2 frames stored per second)
+          uploadMaxFPS: 5
+          # The location where images for training are stored.
+          uploadPrefix: /var/spool/i7e-uploads/active
+          # The optional maximum storage to use, in bytes, before overwriting older files.
+          maxSize: 67108864
+          # Optional filename format, defaults to iso format.
+          # dateTimeFormat: "%Y/%m/%d/%H/%Y-%m-%dT%H:%M:%S.%f"
+    # Reporting of inference results.
+    inferenceLogging:
+      # Optional. Section for parameters specific to RabbitMQ Logging
+      - rabbit:
+          # Boolean to determine if RabbitMQ logging is enable or not
+          enabled: false
+          # Destination IP Address for payloads.
+          host: localhost
+          # Integer number as port. Default is 5672
+          port: 5672
+          # Virtual host for RabbitMQ. Default is /
+          vhost: /
+          # The name of the exchange for RabbitMQ payloads. Used in routing.
+          exchange_name: test
+          # The organization ID to split payloads for different organizations.
+          organization_id: clearobject
+          # Username for authentication to RabbitMQ
+          credentials_username: guest
+          # Password for authentication to RabbitMQ.
+          # (Probably will need to edit this out soon)
+          credentials_password: guest
+      # Optional. Section for parameters specific to Azure Event Hub Logging.
+      - azureEventHub:
+          # Boolean determining if inference payloads are sent to Azure Event Hub
+          # true = yes. false = no.
+          enabled: false
+          # Config for inference messages.
+          inference:
+            # Connection String copied from the Azure Portal for this device.
+            connectString: "Endpoint=sb://xxxxxxxxx;SharedAccessKeyName=publisher;SharedAccessKey=xxxxxxx;\
+              EntityPath=i7e-edge-dev-inference"
+            # Name of Event Hub.
+            eventHubName: xxxxxxxxx
+            # Trigger of message count to flush to service.
+            maximumMessagesPerBatch: 128
+            # Trigger of total message bytes to flush to service.
+            maximumPayloadSize: 4096
+          # Config for liveness messages.
+          liveness:
+            # Connection String copied from the Azure Portal for this device.
+            connectString: "Endpoint=sb://xxxxxxxxx;SharedAccessKeyName=publisher;SharedAccessKey=xxxxxxx;\
+              EntityPath=i7e-edge-dev-liveness"
+            # Name of Event Hub.
+            eventHubName: xxxxxxxxx
+            # Trigger of message count to flush to service.
+            maximumMessagesPerBatch: 128
+            # Trigger of total message bytes to flush to service.
+            maximumPayloadSize: 4096
+      # Optional. Section for parameters specific to Azure IoT Hub Logging
+      - azureIOT:
+          # Boolean determining if inference payloads are sent to Azure IoT Hub
+          # true = yes. false = no.
+          enabled: false
+          # Connection String copied from the Azure Portal for this device.
+          connectString: HostName=xxxxxxxxxxxx-hub.azure-devices.net;DeviceId=xxxxx;SharedAccessKey=bm90IGEgcmVhbCBrZXk=
+      # Optional. Section for parameters specific to Google Cloud PubSub Logging
+      - googlePubsub:
+          # Boolean determining if inference payloads are sent to PubSub.
+          # true = yes. false = no.
+          enabled: false
+          # Batching of inference payloads to decrease number of PubSub messages.
+          # Integer representing total number of inference payloads before send.
+          batchInterval: 30
+          # Topic name for inference payloads to be sent to in PubSub.
+          # Device name will be substituted for {device_name}.
+          inferenceTopic: "projects/clearvision-edge-prod/topics/infer-{device_name}"
+          # Topic name for health signals to be sent to in PubSub.
+          # Device name will be substituted for {device_name}.
+          livenessTopic: "projects/clearvision-edge-prod/topics/liveness-{device_name}"
+          # Optional base64-encoded json credentials file if not passed in the environment.
+          # credentials: xxxxxxx
+      # Optional. Section for parameters specific to PLC logging
+      - plc:
+          # Boolean determining if PLC Connectivity in enabled.
+          # true = yes. false = No
+          enabled: false
+          # IP address of the PLC
+          address: 127.0.0.1
+          # Applicable to Siemens Snap7 PLC only. Port for the PLC Address.
+          # The standard for Snap7 is port 102.
+          port: 9999
+          # Applicable to Siemens Snap7 PLC Slot number which is only applicable
+          # for Snap7 logging. Default is 1.
+          slot: 0
+          # Rack number which is only applicable for Snap7 logging. Default is 0.
+          rack: 0
+          # Applicable to Snap7 PLC only. Datablock number that we will be
+          # writing/reading.
+          block: 0
+          # The offset (in bytes) within the block in which we begin writing the
+          # inference payload.
+          offset: 24
+          # The offset (in bytes) within the block in which we begin reading the
+          # heartbeat values.  Knauf-only.
+          # heartbeatReadOffset: 2
+          # The offset (in bytes) within the block in which we begin writing the
+          # heartbeat values.  Knauf-only.
+          # heartbeatWriteOffset: 200
+          # The offset (in bytes) within the block in which we write camera
+          # liveness.
+          cameraOffset: 196
+          # The offset (in bytes) within the block in which we write inference
+          # results.
+          inferenceOffset: 198
+          # The frequency for heartbeat exchanges.  Knauf-only.
+          # heartbeatFrequency: 1
+    # Section for result visualization streaming.
+    streaming:
+      # Determines location of streaming of video feed.
+      # REMOTE = CV Hub
+      # LOCAL = local desktop display
+      # NULL = Nothing
+      default: REMOTE
+      # Optionally force a constant framerate for result video streaming.
+      # framerate: 20/1
+      # Optionally scale output streaming video.
+      # scale: 0.5
+      # Optionally toggle hardware encoding for Jetsons to reach lower bitrates.
+      # hardwareEncoding: False
+    # A list of video sources. The i7e Inference Engine can contain 1-N
+    # input sources.
+    sources:
+      # An example schema for a directory containing images as input source. This
+      # will be a looping feed of the images.
+      # All images must be the same size.
+      - files:
+          # Boolean to determine if files will be used as an input source.
+          enabled: false
+          # Boolean to dynamically validate sizes of images before feeding into
+          # pipeline.  This can be very slow for large directories.
+          validateSize: false
+          # Integer representing width of images in pixels. This will be the size
+          # of the frames moving through the pipeline all the way to the
+          # pre-process plugin where it is resized in preparation for inference.
+          width: 1456
+          # Integer representing height of images in pixels. This will be the size
+          # of the frames moving through the pipeline all the way to the
+          # pre-process plugin where it is resized in preparation for inference.
+          height: 1088
+          # Directory where the images can be found. This is a directory inside
+          # the docker container so must be mounted at docker runtime with a
+          # directory containing the images on the host machine.
+          directory: /var/spool/i7e/video/longdrive
+          # The naming format of the files. It is very important that all images
+          # in the directory match this naming directory.  The format follows the
+          # standard for printf, substituting a single integer value.
+          filePattern: drive-%05d.png
+          # Frames per second. Integer numerator representing number of frames and
+          # Integer denominator representing seconds. (i.e. 20/1=20FPS, 20/2=10FPS)
+          framerate: 20/1
+          # Starting index of the multi-file sources to be pulled from.
+          # For example, fileIndex: 0 and image%03d.png would start with image file
+          # image000.png.
+          fileIndex: 0
+          # Deadman detect and terminates a stalled pipeline after a normal startup.
+          # value representing number of total idle seconds before the switch is
+          # triggered.
+          deadmanSeconds: 10
+          # Secure key for secure video streaming to CV Hub. Must be
+          # 32 alphanumeric characters long.
+          srtKey: mien2aithaipooChitomoxae7Loo5OhH
+          # The endpoint for streaming video to CV Hub. This includes the endpoint
+          # and the UDP port.
+          srtURI: srt://127.0.0.1:8889
+          # Integer of Bandwidth (in packets) for sending video stream to CV Hub.
+          # Higher values yield higher video fidelity at the cost of more bandwidth
+          # consumed.  Must be a multiple of 524288 (512 kb) if using Jetson
+          # hardware encoding.
+          srtBitrate: 1048576
+          # Infix to add to uploaded names, identifying this source.
+          uploadInfix: files
+          # Boolean enabling uploading training images upload during inference.
+          uploadDuringInference: false
+          # Boolean enabling uploading model results as well as input images during
+          # inference.  Only used if uploadDuringInference is true.
+          uploadResultsDuringInference: true
+          # Boolean enabling event-driven storage of images in the uploadPrefix as
+          # triggered by individual implementations.
+          retentionEnabled: true
+          # Matrices of undistort values calculated using this algorithm:
+          # https://docs.opencv.org/4.x/dc/dbb/tutorial_py_calibration.html.
+          # Default is none.
+          # Example:
+          #    {"matrix": [[1.0, 2.0, 3.0], [4.0, 5.0, 6.0], [7.0, 8.0, 9.0]],
+          #    "coeffs": [1.0, 2.0, 3.0, 4.0, 5.0]}
+          # undistort: null
+      # A schema for the Vimba source plugin which is specifically for supported
+      # Allied Vision cameras only.
+      - vimba:
+          # Boolean to determine if camera will be used as an input source.
+          enabled: true
+          # The camera ID for the Allied Vision camera.
+          # This is typically in the format DEV_XXXXXXXXX where X is a hexadecimal
+          # digit.
+          cameraID: DEV_000000000000
+          # The filepath in the docker container to the Vimba camera settings XML.
+          # This must be mounted in the docker run to be accessible within docker
+          # container.
+          settingsXMLPath: /etc/i7e/DEV_000000000000.xml
+          # Bayer format is method of encoding color into pixels. Valid formats
+          # are bggr, gbrg, grbg, and rggb. Default used is rggb.
+          bayerFormat: rggb
+          # Integer representing width of images in pixels. This will be the size
+          # of the frames moving through the pipeline all the way to the
+          # pre-process plugin where it is resized in preparation for inference.
+          width: 1456
+          # Integer representing height of images in pixels. This will be the size
+          # of the frames moving through the pipeline all the way to the
+          # pre-process plugin where it is resized in preparation for inference.
+          height: 1088
+          # Deadman detect and terminates a stalled pipeline after a normal startup.
+          # value representing number of total idle seconds before the switch is
+          # triggered.
+          deadmanSeconds: 10
+          # Secure key for secure video streaming to CV Hub. Must be
+          # 32 alphanumeric characters long.
+          srtKey: mien2aithaipooChitomoxae7Loo5OhH
+          # The endpoint for streaming video to CV Hub. This includes the endpoint
+          # and the UDP port.
+          srtURI: srt://127.0.0.1:8890
+          # Integer of Bandwidth (in packets) for sending video stream to CV Hub.
+          # Higher values yield higher video fidelity at the cost of more bandwidth
+          # consumed.  Must be a multiple of 524288 (512 kb).
+          srtBitrate: 1048576
+          # Infix to add to uploaded names, identifying this source.
+          uploadInfix: vimba
+          # Boolean enabling uploading training images upload during inference.
+          uploadDuringInference: false
+          # Boolean enabling uploading model results as well as input images during
+          # inference.  Only used if uploadDuringInference is true.
+          uploadResultsDuringInference: true
+          # Boolean enabling event-driven storage of images in the uploadPrefix as
+          # triggered by individual implementations.
+          retentionEnabled: true
+          # Matrices of undistort values calculated using this algorithm:
+          # https://docs.opencv.org/4.x/dc/dbb/tutorial_py_calibration.html.
+          # Default is none.
+          # Example:
+          #    {"matrix": [[1.0, 2.0, 3.0], [4.0, 5.0, 6.0], [7.0, 8.0, 9.0]],
+          #    "coeffs": [1.0, 2.0, 3.0, 4.0, 5.0]}
+          # undistort: null
+      # A schema for the Aravis source plugin which is specifically for genicam
+      # ethernet and usb devices.
+      - aravis:
+          # Boolean representing this specific Aravis source is enabled.
+          enabled: false
+          # Name of camera as seen by Genicam protocol.
+          cameraName: Allied Vision Technologies-Mako G-158C (12751)-50-0536959115
+          # Binning is combining pixels to decrease resolution. For every integer
+          # greater than 1 the resolution is cut in half. For example, if the
+          # height is 1000 pixels when binning is 1 the height is 1000 pixels,
+          # when binning is 2 the height is 500 pixels. As binning increases, the
+          # required exposure for a given saturation decreases.
+          binning: 1
+          # Sets the exposure mode. Exposure is time of light capture for each
+          # frame.
+          # Continuous =  always automatically changing exposure based on lighting
+          #               conditions.
+          # Once = sets the exposure once and then stays at that exposure.
+          # Off = Auto exposure is off.
+          exposureAuto: Continuous
+          # Sets the gain mode. Gain is electronic gain input to image to make
+          # artificially brighter.
+          # Continuous = always automatically changing the gain based on lighting
+          #              conditions.
+          # Once = sets the gain once and then stays at that gain.
+          # Off = auto gain is off.
+          gainAuto: Continuous
+          # Integer representing width of images in pixels. This will be the size
+          # of the frames moving through the pipeline all the way to the
+          # pre-process plugin where it is resized in preparation for inference.
+          width: 1456
+          # Integer representing height of images in pixels. This will be the size
+          # of the frames moving through the pipeline all the way to the
+          # pre-process plugin where it is resized in preparation for inference.
+          height: 1088
+          # Deadman detect and terminates a stalled pipeline after a normal startup.
+          # value representing number of total idle seconds before the switch is
+          # triggered.
+          deadmanSeconds: 10
+          # Secure key for secure video streaming to CV Hub. Must be
+          # 32 alphanumeric characters long.
+          srtKey: P2gsDpUMZnM6jBL3QDmJFaVXX4h4tofp
+          # The endpoint for streaming video to CV Hub. This includes the endpoint
+          # and the UDP port.
+          srtURI: srt://127.0.0.1:8891
+          # Integer of Bandwidth (in packets) for sending video stream to CV Hub.
+          # Higher values yield higher video fidelity at the cost of more bandwidth
+          # consumed.  Must be a multiple of 524288 (512 kb).
+          srtBitrate: 1048576
+          # Infix to add to uploaded names, identifying this source.
+          uploadInfix: aravis
+          # Boolean enabling uploading training images upload during inference.
+          uploadDuringInference: false
+          # Boolean enabling uploading model results as well as input images during
+          # inference.  Only used if uploadDuringInference is true.
+          uploadResultsDuringInference: true
+          # Boolean enabling event-driven storage of images in the uploadPrefix as
+          # triggered by individual implementations.
+          retentionEnabled: true
+          # Matrices of undistort values calculated using this algorithm:
+          # https://docs.opencv.org/4.x/dc/dbb/tutorial_py_calibration.html.
+          # Default is none.
+          # Example:
+          #    {"matrix": [[1.0, 2.0, 3.0], [4.0, 5.0, 6.0], [7.0, 8.0, 9.0]],
+          #    "coeffs": [1.0, 2.0, 3.0, 4.0, 5.0]}
+          # undistort: null
+      # A schema for the rtsp source plugin.
+      - rtsp:
+          # Boolean representing this specific rtsp source is enabled.
+          enabled: false
+          # URI to connect to RTSP Stream
+          uri: rtsp://foof:barf@192.168.50.14:8554/traf
+          # Integer representing width of images in pixels. This will be the size
+          # of the frames moving through the pipeline all the way to the
+          # pre-process plugin where it is resized in preparation for inference.
+          width: 1280
+          # Integer representing height of images in pixels. This will be the size
+          # of the frames moving through the pipeline all the way to the
+          # pre-process plugin where it is resized in preparation for inference.
+          height: 720
+          # Boolean to determine if stream is UDP.  Mutually exclusive with udp.
+          udp: false
+          # Boolean to determine if stream is TCP.  Mutually exclusive with tcp.
+          tcp: true
+          # Deadman detect and terminates a stalled pipeline after a normal startup.
+          # value representing number of total idle seconds before the switch is
+          # triggered.
+          deadmanSeconds: 10
+          # Secure key for secure video streaming to CV Hub. Must be
+          # 32 alphanumeric characters long.
+          srtKey: looj6giiy4Ohp9choogh5uehuf4oe9oh
+          # The endpoint for streaming video to CV Hub. This includes the endpoint
+          # and the UDP port.
+          srtURI: srt://34.86.126.15:8891
+          # Integer of Bandwidth (in packets) for sending video stream to CV Hub.
+          # Higher values yield higher video fidelity at the cost of more bandwidth
+          # consumed.  Must be a multiple of 524288 (512 kb).
+          srtBitrate: 1048576
+          # Infix to add to uploaded names, identifying this source.
+          uploadInfix: rtsp
+          # Boolean enabling uploading training images upload during inference.
+          uploadDuringInference: false
+          # Boolean enabling uploading model results as well as input images during
+          # inference.  Only used if uploadDuringInference is true.
+          uploadResultsDuringInference: true
+          # Boolean enabling event-driven storage of images in the uploadPrefix as
+          # triggered by individual implementations.
+          retentionEnabled: true
+          # Matrices of undistort values calculated using this algorithm:
+          # https://docs.opencv.org/4.x/dc/dbb/tutorial_py_calibration.html.
+          # Default is none.
+          # Example:
+          #    {"matrix": [[1.0, 2.0, 3.0], [4.0, 5.0, 6.0], [7.0, 8.0, 9.0]],
+          #    "coeffs": [1.0, 2.0, 3.0, 4.0, 5.0]}
+          # undistort: null
+      # A schema for the cognexsrc pluting
+      - cognex:
+          # Boolean representing this specific cognex source is enabled.
+          enabled: false
+          # Camera ip address
+          ip: 192.168.50.131
+          # Camera username
+          user: admin
+          # Camera password
+          password: ""
+          # Width of images in the video stream.
+          width: 800
+          # Height of images in the video stream.
+          height: 600
+          # Deadman detect and terminates a stalled pipeline after a normal startup.
+          # value representing number of total idle seconds before the switch is
+          # triggered.
+          deadmanSeconds: 10
+          # Secure key for secure video streaming to CV Hub. Must be
+          # 32 alphanumeric characters long.
+          srtKey: mien2aithaipooChitomoxae7Loo5OhH
+          # The endpoint for streaming video to CV Hub. This includes the endpoint
+          # and the UDP port.
+          srtURI: srt://127.0.0.1:8889
+          # Integer of Bandwidth (in packets) for sending video stream to CV Hub.
+          # Higher values yield higher video fidelity at the cost of more bandwidth
+          # consumed.  Must be a multiple of 524288 (512 kb).
+          srtBitrate: 1048576
+          # Boolean enabling uploading training images upload during inference.
+          uploadDuringInference: false
+          # Boolean enabling uploading model results as well as input images during
+          # inference.  Only used if uploadDuringInference is true.
+          uploadResultsDuringInference: true
+          # Boolean enabling event-driven storage of images in the uploadPrefix as
+          # triggered by individual implementations.
+          retentionEnabled: true
+    # Integer representing width of image produced by pre-process for model use.
+    preprocessWidth: 480
+    # Integer representing height of image produced by pre-process for model use.
+    preprocessHeight: 320
+    # Inference plugin settings. Each entry creates a nvinfer plugin instance for each image source.
+    # Any number of plugin instances can be included as needed.
+    # https://docs.nvidia.com/metropolis/deepstream/dev-guide/text/DS_plugin_gst-nvinfer.html
+    inference:
+      # Instance segmentation inference.
+      - segmentation:
+          # Boolean flag to enable or disable this plugin.
+          enabled: false
+          # Standard deepstream nvinfer plugin configuration file.
+          configFile: |
+            [property]
+            # If included, the file MUST exist.  Comment out to force generation of 
+            # a new engine file.  NOTE: The generated engine will not have the name
+            # specified below, and you'll need to rename it.
+            model-engine-file=/var/spool/segment-cars.engine
+            onnx-file=/var/spool/segment-cars.onnx
+            network-mode=1
+            network-type=2
+            network-input-order=1
+            model-color-format=1
+            infer-dims=3;320;480
+            output-tensor-meta=1
+            segmentation-threshold=0.25
+        # Object detection inference.
+      - objectDetection:
+          enabled: true
+          # Boolean flag to enable or disable this plugin.
+          # Standard deepstream nvinfer plugin configuration file.
+          configFile: |
+            [property]
+            # just an id for this model, used to specify this detection as the 
+            # primary inference for downstream secondary inference(s).
+            gie-unique-id=2
+            cluster-mode=3
+            # If included, the file MUST exist.  Comment out to force generation of 
+            # a new engine file.  NOTE: The generated engine will not have the name
+            # specified below, and you'll need to rename it.
+            model-engine-file=/var/spool/object-cars.engine
+            tlt-encoded-model=/var/spool/object-cars.etlt
+            int8-calib-file=/var/spool/object-cars.int8.txt
+            # fp 32
+            network-mode=1
+            network-input-order=0
+            # from nvidia sample
+            net-scale-factor=0.00392156862745098
+            offsets=0.0;0.0;0.0
+            infer-dims=3;544;960
+            tlt-model-key=tlt_encode
+            network-type=0
+            num-detected-classes=4
+            uff-input-order=0
+            output-blob-names=output_cov/Sigmoid;output_bbox/BiasAdd
+            uff-input-blob-name=input_1
+            model-color-format=0
+            maintain-aspect-ratio=0
+            output-tensor-meta=0
+            threshold=0.1
+        # Classification inference.
+      - classification:
+          # Boolean flag to enable or disable this plugin.
+          enabled: true
+          # Standard deepstream nvinfer plugin configuration file.
+          configFile: |
+            [property]
+            net-scale-factor=1
+            model-file=/var/spool/classification.caffemodel
+            proto-file=/var/spool/classification.prototxt
+            model-engine-file=/var/spool/classification.engine
+            mean-file=/var/spool/classification.mean.ppm
+            int8-calib-file=/var/spool/classification.cal_trt.bin
+            labelfile-path=/etc/i7e/vehicle_class.txt
+            force-implicit-batch-dim=1
+            batch-size=16
+            network-mode=1
+            input-object-min-width=16
+            input-object-min-height=16
+            model-color-format=1
+            # primary (1) or secondary (2).  Primary classifies the full image.
+            process-mode=2
+            gpu-id=0
+            gie-unique-id=4
+            # The gie-unique-id of an object-detection inference plugin on whose
+            # results classifications will be run if process-mode is 2.
+            operate-on-gie-id=2
+            operate-on-class-ids=0
+            is-classifier=1
+            output-blob-names=predictions/Softmax
+            classifier-threshold=0.001
+          # Optional tracker configuration, enabling the nvtracker plugin for this inference.  May be placed within
+          # object-detection or tracker configurations.
+          # https://docs.nvidia.com/metropolis/deepstream/dev-guide/text/DS_plugin_gst-nvtracker.html
+          tracker:
+            # Boolean flag to enable or disable this plugin.
+            enabled: true
+            # Width at which tracking is calculated.
+            width: 640
+            # Height at which tracking is calculated.
+            height: 384
+            # Library which will compute tracking.
+            libraryFile: /opt/nvidia/deepstream/deepstream/lib/libnvds_nvmultiobjecttracker.so
+            # Configuration file for the library which will compute tracking. (Embedded below)
+            configFile: /etc/i7e/config_tracker.yaml
+            trackingSurfaceType: 0
+            computeHardware: 0
+            trackingIdResetMode: 0
+          # Optional analytics configurations, enabling the nvdsanalytics plugin for this inference.  May be placed within
+          # object-detection or tracker configurations, with or without a tracker.
+          # https://docs.nvidia.com/metropolis/deepstream/dev-guide/text/DS_plugin_gst-nvdsanalytics.html
+          analytics:
+            - # Boolean flag to enable or disable this plugin.
+              enabled: true
+              # zero-based source indexes to which apply this analytics plugin.
+              sourceIndexes:
+                - 2
+              # Width used in calculating lines and vectors.
+              width: 1000
+              # Height used in calculating lines and vectors.
+              height: 1000
+              # Optional lineCrossing configuration.
+              lineCrossings:
+                # Adherence value (LOOSE, STRICT, BALANCED)
+                adherence: LOOSE
+                # Whether to extend the line to the edge of the image.
+                extended: true
+                # Object classes on which to detect crossings.  If not supplied, all classes are used.
+                classes:
+                  - 0
+                  - 1
+                  - 3
+                  - 4
+                # Lines and directions for crossing detection.
+                vectors:
+                  - label: LEFT_LANE_FROM_RIGHT
+                    lineStartPoint:
+                      x: 10
+                      "y": 0
+                    lineEndPoint:
+                      x: 390
+                      "y": 500
+                    directionStartPoint:
+                      x: 1000
+                      "y": 750
+                    directionEndPoint:
+                      x: 0
+                      "y": 750
+                  - label: RIGHT_LANE_FROM_LEFT
+                    lineStartPoint:
+                      x: 10
+                      "y": 0
+                    lineEndPoint:
+                      x: 390
+                      "y": 500
+                    directionStartPoint:
+                      x: 0
+                      "y": 750
+                    directionEndPoint:
+                      x: 1000
+                      "y": 750
+              # Optional direction detection configuration.
+              direction:
+                # Adherence value (LOOSE, STRICT, BALANCED)
+                adherence: BALANCED
+                # Object classes on which to detect direction.  If not supplied, all classes are used.
+                classes:
+                  - 0
+                  - 1
+                  - 3
+                  - 4
+                # Direction definitions.
+                vectors:
+                  - startPoint:
+                      x: 1000
+                      "y": 500
+                    endPoint:
+                      x: 0
+                      "y": 500
+                    label: left
+                  - endPoint:
+                      x: 1000
+                      "y": 500
+                    startPoint:
+                      x: 0
+                      "y": 500
+                    label: right
+              # Optional Region Of Interest detection configuration.
+              roi:
+                # If true, results are returned for objects NOT in the ROI.
+                inverse: false
+                # Object classes on which to detect ROIs.  If not supplied, all classes are used.
+                classes:
+                  - 0
+                  - 1
+                  - 3
+                  - 4
+                # If set, the roi is run in overcrowding mode and reports the ROI when the threshold is met.
+                # overcrowdingThreshold: 2
+                # ROI regions.
+                regions:
+                  - label: UL
+                    polygon:
+                      - x: 0
+                        "y": 0
+                      - x: 499
+                        "y": 0
+                      - x: 499
+                        "y": 499
+                      - x: 0
+                        "y": 499
+                  - label: UR
+                    polygon:
+                      - x: 500
+                        "y": 0
+                      - x: 1000
+                        "y": 0
+                      - x: 1000
+                        "y": 499
+                      - x: 500
+                        "y": 499
+                  - label: LL
+                    polygon:
+                      - x: 0
+                        "y": 500
+                      - x: 499
+                        "y": 500
+                      - x: 499
+                        "y": 1000
+                      - x: 0
+                        "y": 1000
+                  - label: LR
+                    polygon:
+                      - x: 500
+                        "y": 500
+                      - x: 1000
+                        "y": 500
+                      - x: 1000
+                        "y": 1000
+                      - x: 500
+                        "y": 1000
+          # Extra files used for this inference, as well as any tracker and analytics.
+          extraFiles:
+            # The classification labels.
+            - name: vehicle_class.txt
+              contents: coupe;largevehicle;sedan;suv;truck;van
+            # The tracker configuration as referenced to in Deepstream samples.
+            # https://github.com/NVIDIA-AI-IOT/deepstream_python_apps/blob/master/apps/deepstream-nvdsanalytics/config_tracker_NvDCF_perf.yml
+            - name: config_tracker.yaml
+              contents: |
+                %YAML:1.0
+                BaseConfig:
+                  minDetectorConfidence: 0
+                TargetManagement:
+                  enableBboxUnClipping: 1
+                  maxTargetsPerStream: 150
+                  minIouDiff4NewTarget: 0.5
+                  minTrackerConfidence: 0.2
+                  probationAge: 3
+                  maxShadowTrackingAge: 30
+                  earlyTerminationAge: 1
+                TrajectoryManagement:
+                  useUniqueID: 0
+                DataAssociator:
+                  dataAssociatorType: 0
+                  associationMatcherType: 0
+                  checkClassMatch: 1
+                  minMatchingScore4Overall: 0.0
+                  minMatchingScore4SizeSimilarity: 0.6
+                  minMatchingScore4Iou: 0.0
+                  minMatchingScore4VisualSimilarity: 0.7
+                  matchingScoreWeight4VisualSimilarity: 0.6
+                  matchingScoreWeight4SizeSimilarity: 0.0
+                  matchingScoreWeight4Iou: 0.4
+                StateEstimator:
+                  stateEstimatorType: 1
+                  processNoiseVar4Loc: 2.0
+                  processNoiseVar4Size: 1.0
+                  processNoiseVar4Vel: 0.1
+                  measurementNoiseVar4Detector: 4.0
+                  measurementNoiseVar4Tracker: 16.0
+                VisualTracker:
+                  visualTrackerType: 1
+                  useColorNames: 1
+                  useHog: 0
+                  featureImgSizeLevel: 2
+                  featureFocusOffsetFactor_y: -0.2
+                  filterLr: 0.075
+                  filterChannelWeightsLr: 0.1
+                  gaussianSigma: 0.75
