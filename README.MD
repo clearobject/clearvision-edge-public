@@ -54,7 +54,7 @@ The values.yaml file contains configuration settings for the ClearVision@theEdge
 
 - `gpuLimit`: Indicates whether a GPU limit is applied.
 - `cameras`: An array that could be used to configure camera inputs, currently empty.
-- `config`: Contains further configuration settings, which includes ClearVision@theEdge application settings, performance tuning parameters, or environment-specific overrides Parameter level specifics can be found within the value.yaml config.
+- `config`: Contains further configuration settings, which includes ClearVision@theEdge application settings, performance tuning parameters, or environment-specific overrides Parameter level specifics can be found within [values.yaml](Clearvision@theEdge/i7e/values.yaml) config.
 
 ### Configuration File Overview
 
