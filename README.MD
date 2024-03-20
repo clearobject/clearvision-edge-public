@@ -2,6 +2,30 @@
 
 # ClearVision@theEdge
 
+Turning Pixels into Profit: ClearVision @ The Edge is a real-time deep learning inference engine designed to abstract the lower level details of developing a highly complex application that can derive custom valuable insights for businesses for data gathering, real-time control feedback, quality inspection, and much more.
+
+### MLOps:
+
+ClearVision @ The Edge provides the platform to help make the MLOps process much easier by providing the key features such passive and active capture. Passive captures allows users to capture images at a regular rate to provide the initial foundation of representative images for annotating a deep learning model.
+
+ClearVision @ The Edge provides the capability to capture custom events at the edge with the active capture feature. By providing simple logic, ClearVision @ The Edge can capture images that are of interest to the business. This can support use-cases such as anomaly driven event detection, false positive detection and more to help support the continuous learning process of deep learning.
+
+### Deep Learning
+
+ClearVision @ The Edge supports deep learning modes such as classification, object detection, object tracking with analytics, and segmentation.
+
+### Custom Insights
+
+ClearVision @ The Edge supports the capability of use-cases where more than deep learning is needed. For example, some use cases will require speed, relatively distance and location of objects, and many more ad-hoc insights that aren’t viable with deep learning alone. That is where the custom post-processing of ClearVision @ The Edge to satisfy these use cases.
+
+### Camera Sources
+
+ClearVision @ The Edge can support any Genicam compliant camera, any RTSP (Realtime Streaming Protocol) based cameras most notably security cameras, file sources, and SRT (Secure Real Time) sources.
+
+----------------------
+
+## Installation
+
 This guide will walk you through the steps to create a Google Kubernetes Engine (GKE) cluster with NVIDIA GPUs and install the NVIDIA driver installer DaemonSet.
 
 ### Prerequisites
@@ -22,16 +46,20 @@ The base configuration file is shown here:
 
 The values.yaml file contains configuration settings for the ClearVision@theEdge application, structured under the i7e key. Here are some of the important sections and parameters found within this file:
 
-- `image`: Specifies the Docker image to use for the deployment, including the registry, repository, and tag.
-- `serviceAccountJSON`: Can be used to specify a service account JSON file for authentication, currently set to null.
+- `image`: Specifies the Docker image to use for the deployment, including the registry, repository, and tag. To be provided upon license procurement and subsequent private offer.
+- `serviceAccountJSON`: Can be used to specify a service account JSON file for authentication, currently set to null. To get a serviceAccountJSON, you can use the command:
+  ```bash
+  gcloud secrets versions access VERSION --secret="SECRET_NAME" --project="YOUR_PROJECT_ID"
+  ```
+
 - `gpuLimit`: Indicates whether a GPU limit is applied.
 - `cameras`: An array that could be used to configure camera inputs, currently empty.
-- `config`: Contains further configuration settings, which includes ClearVision@theEdge application settings, performance tuning parameters, or environment-specific overrides.
+- `config`: Contains further configuration settings, which includes ClearVision@theEdge application settings, performance tuning parameters, or environment-specific overrides Parameter level specifics can be found within the value.yaml config.
 
 ### Configuration File Overview
 
 - `version`: Specifies the configuration version.
-- `livenessLoggingEnabled`: Indicates whether health signals log to PLC (Programmable Logic Controller).
+- `livenessLoggingEnabled`: Indicates whether health signals log to PLC (Programmable Logic Controller). Currently only supports Siemens PLC.  
 - `deviceName`: Name of the device used in CV Hub and PubSub.
 - `templates`: Section for defining reusable snippets of configuration.
 
