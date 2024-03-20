@@ -23,12 +23,10 @@ The base configuration file is shown here:
 The values.yaml file contains configuration settings for the ClearVision@theEdge application, structured under the i7e key. Here are some of the important sections and parameters found within this file:
 
 - `image`: Specifies the Docker image to use for the deployment, including the registry, repository, and tag.
-- `imagePullPolicy`: Defines the policy for pulling the image, such as IfNotPresent which means the image will be pulled if it's not already present locally.
-- `hostNetwork`: A boolean value indicating whether to use the host's network namespace.
 - `serviceAccountJSON`: Can be used to specify a service account JSON file for authentication, currently set to null.
-- `gpuLimit`: Indicates whether a GPU limit is applied, useful for workloads requiring GPU resources.
+- `gpuLimit`: Indicates whether a GPU limit is applied.
 - `cameras`: An array that could be used to configure camera inputs, currently empty.
-- `config`: Contains further configuration settings, which might include custom application settings, performance tuning parameters, or environment-specific overrides.
+- `config`: Contains further configuration settings, which includes ClearVision@theEdge application settings, performance tuning parameters, or environment-specific overrides.
 
 
 #### Deploy 
