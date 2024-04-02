@@ -1,0 +1,18 @@
+i7e:
+  image: us-east4-docker.pkg.dev/clearvision-edge-prod/docker-cve-prod/car-demo-k8s:1.0.0
+  imagePullPolicy: IfNotPresent
+  hostNetwork: true
+  serviceAccountJSON: null
+  gpuLimit: true
+  cameras: []
+  segmentation:
+    enabled: false
+  objectDetection:
+    enabled: false
+  classification:
+    enabled: false
+  sources:
+    files:
+      enabled: true
+      srtKey: goq1lUi3QQLc81NlEjXpb8yQQdfKsrRq
+      srtURI: srt://dev001.video.cvedge.io:8896

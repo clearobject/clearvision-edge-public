@@ -1,0 +1,87 @@
+x-google-marketplace:
+  schemaVersion: v2
+  applicationApiVersion: v1beta1
+  publishedVersion: '4.0.3'
+  publishedVersionMetadata:
+    releaseNote: >-
+      Version 4.0.3 release with GPU support.
+
+  clusterConstraints:
+    resources:
+    - requests:
+        gpu: 
+          nvidia.com/gpu: {}
+
+  images:
+    i7e-app:
+      properties:
+        i7eAppImage:
+          type: FULL
+          default: us-east4-docker.pkg.dev/clearvision-edge-prod/docker-cve-prod/car-demo-k8s:1.0.0
+
+properties:
+  name:
+    type: string
+    x-google-marketplace:
+      type: NAME
+  namespace:
+    type: string
+    x-google-marketplace:
+      type: NAMESPACE
+  i7e.gpuLimit:
+    default: true
+    type: integer
+  i7e.hostNetwork:
+    default: true
+    type: integer
+  i7e.image:
+    default: us-east4-docker.pkg.dev/clearvision-edge-prod/docker-cve-prod/car-demo-k8s:1.0.0
+    type: string
+  i7e.imagePullPolicy:
+    default: IfNotPresent
+    type: string
+  i7e.serviceAccountJSON:
+    type: string
+    x-google-marketplace:
+      type: SERVICE_ACCOUNT
+      serviceAccount:
+        description: >-
+          The service account used by i7e to interact with Kubernetes resources.
+          IMPORTANT: It needs sufficient permissions to manage deployments, services, and other resources in the namespace.
+        roles:
+          - type: ClusterRole
+            rulesType: PREDEFINED
+            rulesFromRoleName: view
+  i7e.segmentation.enabled:
+    default: true
+    type: boolean
+  i7e.objectDetection.enabled:
+    default: false
+    type: boolean
+  i7e.classification.enabled:
+    default: false
+    type: boolean
+  i7e.files.enabled:
+    default: true
+    type: boolean
+  i7e.files.srtKey:
+    default: goq1lUi3QQLc81NlEjXpb8yQQdfKsrRq
+    type: string
+  i7e.files.srtURI:
+    default: srt://dev001.video.cvedge.io:8896
+    type: string
+
+required:
+- name
+- namespace
+- i7e.serviceAccountJSON
+- i7e.imagePullPolicy
+- i7e.hostNetwork
+- i7e.gpuLimit
+- i7e.image
+- i7e.segmentation.enabled
+- i7e.objectDetection.enabled
+- i7e.classification.enabled
+- i7e.files.enabled
+- i7e.files.srtKey
+- i7e.files.srtURI
