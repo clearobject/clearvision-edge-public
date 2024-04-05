@@ -6,11 +6,11 @@ metadata:
   labels:
     app.kubernetes.io/name: "{{ .Release.Name }}"
   annotations:
-    marketplace.cloud.google.com/deploy-info: '{"partner_id": "partner", "product_id": "wordpress", "partner_name": "Partner"}'
+    marketplace.cloud.google.com/deploy-info: '{"partner_id": "0014M00001h38SrQAI", "product_id": "clearvision-inference-engine.endpoints.clearobject-cve-public.cloud.google", "partner_name": "ClearObject"}'
 spec:
   descriptor:
     type: i7e Inference Engine
-    version: '4.0.3'
+    version: '1.3.0'
   selector:
     matchLabels:
       app.kubernetes.io/name: "{{ .Release.Name }}"

@@ -18,14 +18,14 @@ data:
         someKey: someValue
         someOtherKey: someOtherValue
     logging:
-      pipeline: INFO
-      preprocess: INFO
-      postprocess: INFO
-      postprocessResults: DEBUG
+      pipeline: {{ .Values.i7e.logging.pipeline }}
+      preprocess: {{ .Values.i7e.logging.preprocess }}
+      postprocess: {{ .Values.i7e.logging.postprocess }}
+      postprocessResults: {{ .Values.i7e.logging.postprocessResults }}
       azureIOT: INFO
       azureEventHub: INFO
-      plc: INFO
-      googlePubsub: INFO
+      plc: {{ .Values.i7e.logging.plc }}
+      googlePubsub: {{ .Values.i7e.logging.plc }}
       snap7: INFO
       googleCloud: WARN
       streamer: INFO

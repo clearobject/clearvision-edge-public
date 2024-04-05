@@ -1,23 +1,40 @@
 x-google-marketplace:
   schemaVersion: v2
   applicationApiVersion: v1beta1
-  publishedVersion: '4.0.3'
+  publishedVersion: '1.3.0'
   publishedVersionMetadata:
     releaseNote: >-
-      Version 4.0.3 release with GPU support.
+      i7e Version 4.0.3 release with GPU support.
 
   clusterConstraints:
-    resources:
-    - requests:
-        gpu: 
-          nvidia.com/gpu: {}
+    # resources:
+    # - requests:
+    #     gpu: 
+    #       nvidia.com/gpu: {}
+    assistedClusterCreation:
+      type: DISABLED
+      creationGuidance: "Create a COS Cluster with nvidia-drivers preloaded. Head to https://github.com/clearobject/clearvision-edge-public/blob/main/README.MD to understand how to create a cluster"
+      # gke:
+      #   nodePool:
+      #   - numNodes: 1
+      #     machineType: g2-standard-16
+
+  cluster_requirements:
+    title: Cluster requirements
+    type: string
+    description: >- 
+      Type YES to confirm that cluster meets following requirements.
+      1. Kuberenetes nodes have at least 4GB memory. 
+      2. For GKE, Nodes have COS image. 
+      3. An nvidia gpu is available with the daemonset loaded.
+    pattern: '^YES|yes$'
 
   images:
-    i7e-app:
+    i7e-base:
       properties:
-        i7eAppImage:
+        i7e-baseImage:
           type: FULL
-          default: us-east4-docker.pkg.dev/clearvision-edge-prod/docker-cve-prod/car-demo-k8s:1.0.0
+          default: gcr.io/clearvision-edge-prod/i7e/i7e-base:1.3.0
 
 properties:
   name:
@@ -28,15 +45,15 @@ properties:
     type: string
     x-google-marketplace:
       type: NAMESPACE
+  i7e.image:
+    type: string
+    default: gcr.io/clearvision-edge-prod/i7e/i7e-base:1.3.0
   i7e.gpuLimit:
     default: true
-    type: integer
+    type: boolean
   i7e.hostNetwork:
     default: true
-    type: integer
-  i7e.image:
-    default: us-east4-docker.pkg.dev/clearvision-edge-prod/docker-cve-prod/car-demo-k8s:1.0.0
-    type: string
+    type: boolean
   i7e.imagePullPolicy:
     default: IfNotPresent
     type: string
@@ -61,15 +78,56 @@ properties:
   i7e.classification.enabled:
     default: false
     type: boolean
-  i7e.files.enabled:
+  i7e.sources.files.enabled:
     default: true
     type: boolean
-  i7e.files.srtKey:
+  i7e.sources.files.srtKey:
     default: goq1lUi3QQLc81NlEjXpb8yQQdfKsrRq
     type: string
-  i7e.files.srtURI:
+  i7e.sources.files.srtURI:
     default: srt://dev001.video.cvedge.io:8896
     type: string
+  i7e.logging.pipeline:
+    type: string
+    title: Pipeline logging
+    enum:
+    - INFO
+    - DEBUG
+    - WARN
+    - CRITICAL
+  i7e.logging.preprocess:
+    type: string
+    title: Preprocess logging
+    enum:
+    - INFO
+    - DEBUG
+    - WARN
+    - CRITICAL
+  i7e.logging.postprocess:
+    type: string
+    title: Postprocess logging
+    enum:
+    - INFO
+    - DEBUG
+    - WARN
+    - CRITICAL
+  i7e.logging.postprocessResults:
+    type: string
+    title: Postprocess Results logging
+    enum:
+    - INFO
+    - DEBUG
+    - WARN
+    - CRITICAL
+  i7e.logging.plc:
+    type: string
+    title: Pipeline logging
+    enum:
+    - INFO
+    - DEBUG
+    - WARN
+    - CRITICAL
+  
 
 required:
 - name
@@ -78,10 +136,9 @@ required:
 - i7e.imagePullPolicy
 - i7e.hostNetwork
 - i7e.gpuLimit
-- i7e.image
 - i7e.segmentation.enabled
 - i7e.objectDetection.enabled
 - i7e.classification.enabled
-- i7e.files.enabled
-- i7e.files.srtKey
-- i7e.files.srtURI
+- i7e.sources.files.enabled
+- i7e.sources.files.srtKey
+- i7e.sources.files.srtURI

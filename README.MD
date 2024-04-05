@@ -134,12 +134,24 @@ gcloud services enable compute.googleapis.com
 Create a cluster with NVIDIA Tesla T4 GPUs, you may use any nvidia GPUs. Adjust the zone and machine type as needed:
 
 ```bash 
-gcloud container clusters create [CLUSTER_NAME] \
-  --zone [COMPUTE_ZONE] \
-  --machine-type n1-standard-4 \
-  --accelerator type=nvidia-tesla-t4,count=1 \
-  --num-nodes 1 \
-  --enable-autoupgrade
+gcloud beta container --project [PROJECT_NAME] clusters create [CLUSTER_NAME] \
+  --no-enable-basic-auth \
+  --machine-type "n1-standard-4" \
+  --accelerator "type=nvidia-tesla-t4,count=2,gpu-driver-version=latest" \
+  --image-type "COS_CONTAINERD" \
+  --disk-type "pd-balanced" \
+  --disk-size "200" \
+  --num-nodes "2" \
+  --workload-vulnerability-scanning=disabled \
+  --addons HorizontalPodAutoscaling,HttpLoadBalancing,GcePersistentDiskCsiDriver \
+  --enable-autoupgrade \
+  --enable-autorepair \
+  --max-surge-upgrade 1 \
+  --max-unavailable-upgrade 0 \
+  --binauthz-evaluation-mode=DISABLED \
+  --enable-managed-prometheus \
+  --enable-shielded-nodes \
+  --node-locations [COMPUTE_ZONE]
 ```
 
 4. Verify the cluster creation:
@@ -153,20 +165,9 @@ You must manually install a compatible NVIDIA GPU driver on the nodes. Google pr
 
 To deploy the installation DaemonSet and install the default GPU driver version, run the following command:
 
-- If on a Container-Optimized OS (COS) 
+- On a Container-Optimized OS (COS) 
 ```bash
 kubectl apply -f https://raw.githubusercontent.com/GoogleCloudPlatform/container-engine-accelerators/master/nvidia-driver-installer/cos/daemonset-preloaded-latest.yaml
-```
-
-- If on an Ubuntu Node
-```bash
-kubectl apply -f https://raw.githubusercontent.com/GoogleCloudPlatform/container-engine-accelerators/master/nvidia-driver-installer/ubuntu/daemonset-preloaded.yaml
-```
-
-NOTE:
-For NVIDIA L4 GPUs, install the R525 driver instead by using the following command:
-```bash
-kubectl apply -f https://raw.githubusercontent.com/GoogleCloudPlatform/container-engine-accelerators/master/nvidia-driver-installer/ubuntu/daemonset-preloaded-R525.yaml
 ```
 
 ## Verify Nvidia Cuda Runtime on Kubernetes

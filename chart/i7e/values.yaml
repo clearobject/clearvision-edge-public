@@ -1,5 +1,5 @@
 i7e:
-  image: us-east4-docker.pkg.dev/clearvision-edge-prod/docker-cve-prod/car-demo-k8s:1.0.0
+  image: gcr.io/clearvision-edge-prod/i7e/i7e-base:x.y.z
   imagePullPolicy: IfNotPresent
   hostNetwork: true
   serviceAccountJSON: null
@@ -16,3 +16,9 @@ i7e:
       enabled: true
       srtKey: goq1lUi3QQLc81NlEjXpb8yQQdfKsrRq
       srtURI: srt://dev001.video.cvedge.io:8896
+  logging:
+    pipeline: INFO
+    preprocess: INFO
+    postprocess: INFO
+    postprocessResults: INFO
+    plc: INFO
