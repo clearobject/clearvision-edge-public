@@ -7,27 +7,13 @@ x-google-marketplace:
       i7e Version 4.0.3 release with GPU support.
 
   clusterConstraints:
-    # resources:
-    # - requests:
-    #     gpu: 
-    #       nvidia.com/gpu: {}
+    resources:
+    - requests:
+        gpu: 
+          nvidia.com/gpu: {}
     assistedClusterCreation:
       type: DISABLED
       creationGuidance: "Create a COS Cluster with nvidia-drivers preloaded. Head to https://github.com/clearobject/clearvision-edge-public/blob/main/README.MD to understand how to create a cluster"
-      # gke:
-      #   nodePool:
-      #   - numNodes: 1
-      #     machineType: g2-standard-16
-
-  cluster_requirements:
-    title: Cluster requirements
-    type: string
-    description: >- 
-      Type YES to confirm that cluster meets following requirements.
-      1. Kuberenetes nodes have at least 4GB memory. 
-      2. For GKE, Nodes have COS image. 
-      3. An nvidia gpu is available with the daemonset loaded.
-    pattern: '^YES|yes$'
 
   images:
     i7e-base:
