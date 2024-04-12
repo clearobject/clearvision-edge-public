@@ -16,9 +16,45 @@ i7e:
       enabled: true
       srtKey: goq1lUi3QQLc81NlEjXpb8yQQdfKsrRq
       srtURI: srt://dev001.video.cvedge.io:8896
+    aravis:
+      enabled: false
+      cameraName: Allied Vision Technologies-Mako G-158C (12751)-50-0536959115
+      binning: 1
+      exposureAuto: Continuous
+      gainAuto: Continuous
+      width: 1456
+      height: 1088
+      srtKey: P2gsDpUMZnM6jBL3QDmJFaVXX4h4tofp
+      srtURI: srt://127.0.0.1:8891
+      uploadDuringInference: false
+      uploadResultsDuringInference: true
+      retentionEnabled: true
   logging:
     pipeline: INFO
     preprocess: INFO
     postprocess: INFO
     postprocessResults: INFO
     plc: INFO
+    googlePubsub: INFO
+    snap7: INFO
+    googleCloud: WARN
+    streamer: INFO
+  imageCapture:
+    passive:
+      google:
+        enabled: false
+        uploadMaxFPS: 5
+        uploadPrefix: "{device_name}/passive"
+        bucketName: clearvision-edge-prod-upload
+    active:
+      google:
+        enabled: false
+        uploadMaxFPS: 5
+        uploadPrefix: "{device_name}/active"
+        bucketName: clearvision-edge-prod-upload
+  inferenceLogging:
+    googlePubsub:
+      enabled: false
+      batchInterval: 30
+      inferenceTopic: "projects/clearvision-edge-prod/topics/infer-<device_name>"
+      livenessTopic: "projects/clearvision-edge-prod/topics/liveness-<device_name>"

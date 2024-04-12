@@ -25,10 +25,10 @@ data:
       azureIOT: INFO
       azureEventHub: INFO
       plc: {{ .Values.i7e.logging.plc }}
-      googlePubsub: {{ .Values.i7e.logging.plc }}
-      snap7: INFO
-      googleCloud: WARN
-      streamer: INFO
+      googlePubsub: {{ .Values.i7e.logging.googlePubsub }}
+      snap7: {{ .Values.i7e.logging.snap7 }}
+      googleCloud: {{ .Values.i7e.logging.googleCloud }}
+      streamer: {{ .Values.i7e.logging.streamer }}
       rabbit: INFO
     imageCapture:
       passive:
@@ -39,10 +39,10 @@ data:
           accountName: xxxxxxxxxxxxxx
           containerName: container1
         google:
-          enabled: false
-          uploadMaxFPS: 5
-          uploadPrefix: "{device_name}/passive"
-          bucketName: clearvision-edge-prod-upload
+          enabled: {{ .Values.i7e.imageCapture.passive.google.enabled }}
+          uploadMaxFPS: {{ .Values.i7e.imageCapture.passive.google.uploadMaxFPS }}
+          uploadPrefix: {{ .Values.i7e.imageCapture.passive.google.uploadPrefix }}
+          bucketName: {{ .Values.i7e.imageCapture.passive.google.bucketName }}
         file:
           enabled: false
           uploadMaxFPS: 5
@@ -56,10 +56,10 @@ data:
           accountName: xxxxxxxxxxxxxx
           containerName: container1
         google:
-          enabled: false
-          uploadMaxFPS: 5
-          uploadPrefix: "{device_name}/active"
-          bucketName: clearvision-edge-prod-upload
+          enabled: {{ .Values.i7e.imageCapture.active.google.enabled }}
+          uploadMaxFPS: {{ .Values.i7e.imageCapture.active.google.uploadMaxFPS }}
+          uploadPrefix: {{ .Values.i7e.imageCapture.active.google.uploadPrefix }}
+          bucketName: {{ .Values.i7e.imageCapture.active.google.bucketName }}
         file:
           enabled: false
           uploadMaxFPS: 5
@@ -93,10 +93,10 @@ data:
           enabled: false
           connectString: HostName=xxxxxxxxxxxx-hub.azure-devices.net;DeviceId=xxxxx;SharedAccessKey=bm90IGEgcmVhbCBrZXk=
       - googlePubsub:
-          enabled: false
-          batchInterval: 30
-          inferenceTopic: "projects/clearvision-edge-prod/topics/infer-{device_name}"
-          livenessTopic: "projects/clearvision-edge-prod/topics/liveness-{device_name}"
+          enabled: {{ .Values.i7e.inferenceLogging.googlePubsub.enabled }}
+          batchInterval: {{ .Values.i7e.inferenceLogging.googlePubsub.batchInterval }}
+          inferenceTopic: {{ .Values.i7e.inferenceLogging.googlePubsub.inferenceTopic }}
+          livenessTopic: {{ .Values.i7e.inferenceLogging.googlePubsub.livenessTopic }}
       - plc:
           enabled: false
           address: 127.0.0.1
@@ -146,21 +146,21 @@ data:
           uploadResultsDuringInference: true
           retentionEnabled: true
       - aravis:
-          enabled: false
-          cameraName: Allied Vision Technologies-Mako G-158C (12751)-50-0536959115
-          binning: 1
-          exposureAuto: Continuous
-          gainAuto: Continuous
-          width: 1456
-          height: 1088
+          enabled: {{ .Values.i7e.sources.aravis.enabled }}
+          cameraName: {{ .Values.i7e.sources.aravis.cameraName }}
+          binning: {{ .Values.i7e.sources.aravis.binning }}
+          exposureAuto: {{ .Values.i7e.sources.aravis.exposureAuto }}
+          gainAuto: {{ .Values.i7e.sources.aravis.gainAuto }}
+          width: {{ .Values.i7e.sources.aravis.width }}
+          height: {{ .Values.i7e.sources.aravis.height }}
           deadmanSeconds: 10
-          srtKey: P2gsDpUMZnM6jBL3QDmJFaVXX4h4tofp
-          srtURI: srt://127.0.0.1:8891
+          srtKey: {{ .Values.i7e.sources.aravis.srtKey }}
+          srtURI: {{ .Values.i7e.sources.aravis.srtURI }}
           srtBitrate: 1048576
           uploadInfix: aravis
-          uploadDuringInference: false
-          uploadResultsDuringInference: true
-          retentionEnabled: true
+          uploadDuringInference: {{ .Values.i7e.sources.aravis.uploadDuringInference }}
+          uploadResultsDuringInference: {{ .Values.i7e.sources.aravis.uploadResultsDuringInference }}
+          retentionEnabled: {{ .Values.i7e.sources.aravis.retentionEnabled }}
       - rtsp:
           enabled: false
           uri: rtsp://foof:barf@192.168.50.14:8554/traf

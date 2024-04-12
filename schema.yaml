@@ -1,16 +1,16 @@
 x-google-marketplace:
   schemaVersion: v2
   applicationApiVersion: v1beta1
-  publishedVersion: '1.3.0'
+  publishedVersion: '1.4.0'
   publishedVersionMetadata:
     releaseNote: >-
       i7e Version 4.0.3 release with GPU support.
 
   clusterConstraints:
     resources:
-    - requests:
-        gpu: 
-          nvidia.com/gpu: {}
+      - requests:
+          gpu: 
+            nvidia.com/gpu: {}
     assistedClusterCreation:
       type: DISABLED
       creationGuidance: "Create a COS Cluster with nvidia-drivers preloaded. Head to https://github.com/clearobject/clearvision-edge-public/blob/main/README.MD to understand how to create a cluster"
@@ -20,7 +20,7 @@ x-google-marketplace:
       properties:
         i7e-baseImage:
           type: FULL
-          default: gcr.io/clearvision-edge-prod/i7e/i7e-base:1.3.0
+          default: gcr.io/clearvision-edge-prod/i7e/i7e-base:1.4.0
 
 properties:
   name:
@@ -33,7 +33,7 @@ properties:
       type: NAMESPACE
   i7e.image:
     type: string
-    default: gcr.io/clearvision-edge-prod/i7e/i7e-base:1.3.0
+    default: gcr.io/clearvision-edge-prod/i7e/i7e-base:1.4.0
   i7e.gpuLimit:
     default: true
     type: boolean
@@ -55,8 +55,20 @@ properties:
           - type: ClusterRole
             rulesType: PREDEFINED
             rulesFromRoleName: view
+          - type: ClusterRole
+            rulesType: CUSTOM
+            rules:
+              - apiGroups: [""]
+                resources: ["storage.googleapis.com/*"]
+                verbs: ["create", "get", "update", "delete", "list"]
+          - type: ClusterRole
+            rulesType: CUSTOM
+            rules:
+              - apiGroups: [""]
+                resources: ["pubsub.googleapis.com/*"]
+                verbs: ["create", "get", "update", "delete", "publish", "subscribe"]
   i7e.segmentation.enabled:
-    default: true
+    default: false
     type: boolean
   i7e.objectDetection.enabled:
     default: false
@@ -73,58 +85,95 @@ properties:
   i7e.sources.files.srtURI:
     default: srt://dev001.video.cvedge.io:8896
     type: string
-  i7e.logging.pipeline:
+  i7e.sources.aravis.enabled:
+    default: false
+    type: boolean
+  i7e.sources.aravis.cameraName:
+    default: "Allied Vision Technologies-Mako G-158C (12751)-50-0536959115"
     type: string
-    title: Pipeline logging
-    enum:
-    - INFO
-    - DEBUG
-    - WARN
-    - CRITICAL
-  i7e.logging.preprocess:
+  i7e.sources.aravis.binning:
+    default: 1
+    type: integer
+  i7e.sources.aravis.exposureAuto:
+    default: "Continuous"
     type: string
-    title: Preprocess logging
-    enum:
-    - INFO
-    - DEBUG
-    - WARN
-    - CRITICAL
-  i7e.logging.postprocess:
+  i7e.sources.aravis.gainAuto:
+    default: "Continuous"
     type: string
-    title: Postprocess logging
-    enum:
-    - INFO
-    - DEBUG
-    - WARN
-    - CRITICAL
-  i7e.logging.postprocessResults:
+  i7e.sources.aravis.width:
+    default: 1456
+    type: integer
+  i7e.sources.aravis.height:
+    default: 1088
+    type: integer
+  i7e.sources.aravis.srtKey:
+    default: P2gsDpUMZnM6jBL3QDmJFaVXX4h4tofp
     type: string
-    title: Postprocess Results logging
-    enum:
-    - INFO
-    - DEBUG
-    - WARN
-    - CRITICAL
-  i7e.logging.plc:
+  i7e.sources.aravis.srtURI:
+    default: srt://127.0.0.1:8891
     type: string
-    title: Pipeline logging
-    enum:
-    - INFO
-    - DEBUG
-    - WARN
-    - CRITICAL
-  
+  i7e.sources.aravis.uploadDuringInference:
+    default: false
+    type: boolean
+  i7e.sources.aravis.uploadResultsDuringInference:
+    default: true
+    type: boolean
+  i7e.sources.aravis.retentionEnabled:
+    default: true
+    type: boolean
+  i7e.imageCapture.passive.google.enabled:
+    default: false
+    type: boolean
+  i7e.imageCapture.passive.google.uploadMaxFPS:
+    default: 5
+    type: integer
+  i7e.imageCapture.passive.google.uploadPrefix:
+    default: "\"{device_name}/passive\""
+    type: string
+  i7e.imageCapture.passive.google.bucketName:
+    default: "clearvision-edge-prod-upload"
+    type: string
+  i7e.imageCapture.active.google.enabled:
+    default: false
+    type: boolean
+  i7e.imageCapture.active.google.uploadMaxFPS:
+    default: 5
+    type: integer
+  i7e.imageCapture.active.google.uploadPrefix:
+    default: "\"{device_name}/active\""
+    type: string
+  i7e.imageCapture.active.google.bucketName:
+    default: "clearvision-edge-prod-upload"
+    type: string
+  i7e.inferenceLogging.googlePubsub.enabled:
+    default: false
+    type: boolean
+  i7e.inferenceLogging.googlePubsub.batchInterval:
+    default: 30
+    type: integer
+  i7e.inferenceLogging.googlePubsub.inferenceTopic:
+    default: "projects/clearvision-edge-prod/topics/infer-{device_name}"
+    type: string
+  i7e.inferenceLogging.googlePubsub.livenessTopic:
+    default: "projects/clearvision-edge-prod/topics/liveness-{device_name}"
+    type: string
 
 required:
-- name
-- namespace
-- i7e.serviceAccountJSON
-- i7e.imagePullPolicy
-- i7e.hostNetwork
-- i7e.gpuLimit
-- i7e.segmentation.enabled
-- i7e.objectDetection.enabled
-- i7e.classification.enabled
-- i7e.sources.files.enabled
-- i7e.sources.files.srtKey
-- i7e.sources.files.srtURI
+  - name
+  - namespace
+  - i7e.serviceAccountJSON
+  - i7e.imagePullPolicy
+  - i7e.hostNetwork
+  - i7e.gpuLimit
+  - i7e.segmentation.enabled
+  - i7e.objectDetection.enabled
+  - i7e.classification.enabled
+  - i7e.sources.files.enabled
+  - i7e.sources.files.srtKey
+  - i7e.sources.files.srtURI
+  - i7e.sources.aravis.enabled
+  - i7e.sources.aravis.uploadResultsDuringInference
+  - i7e.sources.aravis.retentionEnabled
+  - i7e.imageCapture.passive.google.enabled
+  - i7e.imageCapture.active.google.enabled
+  - i7e.inferenceLogging.googlePubsub.enabled
