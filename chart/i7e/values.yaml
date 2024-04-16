@@ -3,6 +3,7 @@ i7e:
   imagePullPolicy: IfNotPresent
   hostNetwork: true
   serviceAccountJSON: null
+  serviceAccountName: null
   gpuLimit: true
   cameras: []
   segmentation:

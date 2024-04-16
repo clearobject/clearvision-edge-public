@@ -1,7 +1,7 @@
 x-google-marketplace:
   schemaVersion: v2
   applicationApiVersion: v1beta1
-  publishedVersion: '1.4.0'
+  publishedVersion: '1.6.1'
   publishedVersionMetadata:
     releaseNote: >-
       i7e Version 4.0.3 release with GPU support.
@@ -20,7 +20,7 @@ x-google-marketplace:
       properties:
         i7e-baseImage:
           type: FULL
-          default: gcr.io/clearvision-edge-prod/i7e/i7e-base:1.4.0
+          default: gcr.io/clearvision-edge-prod/i7e/i7e-base:1.6.0
 
 properties:
   name:
@@ -33,7 +33,7 @@ properties:
       type: NAMESPACE
   i7e.image:
     type: string
-    default: gcr.io/clearvision-edge-prod/i7e/i7e-base:1.4.0
+    default: gcr.io/clearvision-edge-prod/i7e/i7e-base:1.6.0
   i7e.gpuLimit:
     default: true
     type: boolean
@@ -43,7 +43,7 @@ properties:
   i7e.imagePullPolicy:
     default: IfNotPresent
     type: string
-  i7e.serviceAccountJSON:
+  i7e.serviceAccountName:
     type: string
     x-google-marketplace:
       type: SERVICE_ACCOUNT
@@ -55,18 +55,9 @@ properties:
           - type: ClusterRole
             rulesType: PREDEFINED
             rulesFromRoleName: view
-          - type: ClusterRole
-            rulesType: CUSTOM
-            rules:
-              - apiGroups: [""]
-                resources: ["storage.googleapis.com/*"]
-                verbs: ["create", "get", "update", "delete", "list"]
-          - type: ClusterRole
-            rulesType: CUSTOM
-            rules:
-              - apiGroups: [""]
-                resources: ["pubsub.googleapis.com/*"]
-                verbs: ["create", "get", "update", "delete", "publish", "subscribe"]
+  i7e.serviceAccountJSON:
+    default: service account cloud-json pasted here
+    type: string
   i7e.segmentation.enabled:
     default: false
     type: boolean
@@ -161,6 +152,7 @@ properties:
 required:
   - name
   - namespace
+  - i7e.serviceAccountName
   - i7e.serviceAccountJSON
   - i7e.imagePullPolicy
   - i7e.hostNetwork
