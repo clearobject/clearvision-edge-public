@@ -16,7 +16,7 @@ i7e:
     files:
       enabled: true
       srtKey: goq1lUi3QQLc81NlEjXpb8yQQdfKsrRq
-      srtURI: srt://dev001.video.cvedge.io:8896
+      srtURI: srt://dev001.video.cvedge.io:xyza
     aravis:
       enabled: false
       cameraName: Allied Vision Technologies-Mako G-158C (12751)-50-0536959115
@@ -26,7 +26,7 @@ i7e:
       width: 1456
       height: 1088
       srtKey: P2gsDpUMZnM6jBL3QDmJFaVXX4h4tofp
-      srtURI: srt://127.0.0.1:8891
+      srtURI: srt://127.0.0.1:xyza
       uploadDuringInference: false
       uploadResultsDuringInference: true
       retentionEnabled: true

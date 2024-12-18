@@ -1,7 +1,7 @@
 x-google-marketplace:
   schemaVersion: v2
   applicationApiVersion: v1beta1
-  publishedVersion: '1.6.1'
+  publishedVersion: '1.8.0'
   publishedVersionMetadata:
     releaseNote: >-
       i7e Version 4.0.3 release with GPU support.
@@ -20,7 +20,7 @@ x-google-marketplace:
       properties:
         i7e-baseImage:
           type: FULL
-          default: gcr.io/clearvision-edge-prod/i7e/i7e-base:1.6.0
+          default: gcr.io/clearvision-edge-prod/i7e/i7e-base:1.8.0
 
 properties:
   name:
@@ -33,7 +33,7 @@ properties:
       type: NAMESPACE
   i7e.image:
     type: string
-    default: gcr.io/clearvision-edge-prod/i7e/i7e-base:1.6.0
+    default: gcr.io/clearvision-edge-prod/i7e/i7e-base:1.8.0
   i7e.gpuLimit:
     default: true
     type: boolean
@@ -101,7 +101,7 @@ properties:
     default: P2gsDpUMZnM6jBL3QDmJFaVXX4h4tofp
     type: string
   i7e.sources.aravis.srtURI:
-    default: srt://127.0.0.1:8891
+    default: srt://127.0.0.1:xyza
     type: string
   i7e.sources.aravis.uploadDuringInference:
     default: false
