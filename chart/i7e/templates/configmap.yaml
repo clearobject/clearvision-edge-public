@@ -41,7 +41,7 @@ data:
         google:
           enabled: {{ .Values.i7e.imageCapture.passive.google.enabled }}
           uploadMaxFPS: {{ .Values.i7e.imageCapture.passive.google.uploadMaxFPS }}
-          uploadPrefix: "{{ .Values.i7e.imageCapture.passive.google.uploadPrefix }}"
+          uploadPrefix: {{ .Values.i7e.imageCapture.passive.google.uploadPrefix }}
           bucketName: {{ .Values.i7e.imageCapture.passive.google.bucketName }}
         file:
           enabled: false
@@ -58,7 +58,7 @@ data:
         google:
           enabled: {{ .Values.i7e.imageCapture.active.google.enabled }}
           uploadMaxFPS: {{ .Values.i7e.imageCapture.active.google.uploadMaxFPS }}
-          uploadPrefix: "{{ .Values.i7e.imageCapture.active.google.uploadPrefix }}"
+          uploadPrefix: {{ .Values.i7e.imageCapture.active.google.uploadPrefix }}
           bucketName: {{ .Values.i7e.imageCapture.active.google.bucketName }}
         file:
           enabled: false
