@@ -31,11 +31,7 @@ spec:
           {{ end }}
           image: {{ .Values.i7e.image }}
           imagePullPolicy: {{ .Values.i7e.imagePullPolicy }}
-          args:
-            - "-m"
-            - "inference"
-            - "-f"
-            - "/etc/i7e/config.yaml"
+          command: ["python3", "/app/entrypoint.py", "-m", "inference", "-f", "/etc/i7e/config.yaml"] 
           {{ if .Values.i7e.serviceAccountJSON }}
           env:
             - name: GOOGLE_APPLICATION_CREDENTIALS
@@ -54,41 +50,6 @@ spec:
             - mountPath: "/etc/i7e/cloud.json"
               name: cloud-json
               subPath: cloud.json
-            {{ end }}
-      initContainers:
-        - name: vimba-list-cameras
-          image: {{ .Values.i7e.image }}
-          imagePullPolicy: {{ .Values.i7e.imagePullPolicy }}
-          args:
-            - "-m"
-            - "vimba-list"
-            - "-f"
-            - "/etc/i7e/config.yaml"
-          volumeMounts:
-            - mountPath: /etc/i7e/config.yaml
-              name: i7e-config
-              subPath: config.yaml
-            {{ range $camera := .Values.i7e.cameras }}
-            - mountPath: /etc/i7e/{{$camera.name}}.xml
-              name: i7e-config
-              subPath: {{$camera.name}}.xml
-            {{ end }}
-        - name: list-cameras-aravis
-          image: {{ .Values.i7e.image }}
-          imagePullPolicy: {{ .Values.i7e.imagePullPolicy }}
-          args:
-            - "-m"
-            - "aravis-list"
-            - "-f"
-            - "/etc/i7e/config.yaml"
-          volumeMounts:
-            - mountPath: /etc/i7e/config.yaml
-              name: i7e-config
-              subPath: config.yaml
-            {{ range $camera := .Values.i7e.cameras }}
-            - mountPath: /etc/i7e/{{$camera.name}}.xml
-              name: i7e-config
-              subPath: {{$camera.name}}.xml
             {{ end }}
       {{ if .Values.i7e.serviceAccountJSON }}
       imagePullSecrets:
