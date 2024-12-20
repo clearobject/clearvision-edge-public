@@ -107,10 +107,10 @@ properties:
     default: false
     type: boolean
   i7e.sources.aravis.uploadResultsDuringInference:
-    default: true
+    default: false
     type: boolean
   i7e.sources.aravis.retentionEnabled:
-    default: true
+    default: false
     type: boolean
   i7e.imageCapture.passive.google.enabled:
     default: false

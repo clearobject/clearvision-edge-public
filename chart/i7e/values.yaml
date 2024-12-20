@@ -1,5 +1,5 @@
 i7e:
-  image: gcr.io/clearvision-edge-prod/i7e/i7e-base:x.y.z
+  image: gcr.io/clearvision-edge-prod/i7e/i7e-base:1.8.0
   imagePullPolicy: IfNotPresent
   hostNetwork: true
   serviceAccountJSON: null
@@ -28,13 +28,13 @@ i7e:
       srtKey: P2gsDpUMZnM6jBL3QDmJFaVXX4h4tofp
       srtURI: srt://127.0.0.1:8891
       uploadDuringInference: false
-      uploadResultsDuringInference: true
-      retentionEnabled: true
+      uploadResultsDuringInference: false
+      retentionEnabled: false
   logging:
     pipeline: INFO
     preprocess: INFO
     postprocess: INFO
-    postprocessResults: INFO
+    postprocessResults: DEBUG
     plc: INFO
     googlePubsub: INFO
     snap7: INFO
