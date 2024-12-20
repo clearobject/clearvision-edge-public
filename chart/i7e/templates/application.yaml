@@ -11,7 +11,7 @@ metadata:
 spec:
   descriptor:
     type: i7e Inference Engine
-    version: '1.8.1'
+    version: '1.8.0'
     notes: |-
 
       # Notes
