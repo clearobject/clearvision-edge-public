@@ -1,5 +1,5 @@
 i7e:
-  image: gcr.io/clearvision-edge-prod/i7e/i7e-base:1.8.0
+  image: gcr.io/clearvision-edge-prod/i7e/i7e-base:1.8.5
   imagePullPolicy: IfNotPresent
   hostNetwork: true
   serviceAccountJSON: null
