@@ -42,7 +42,7 @@ To deploy ClearVision@theEdge, navigate to the ClearVision@theEdge directory. Yo
 ClearVision@theEdge directory is structured as a Helm chart, indicated by the presence of Chart.yaml, .helmignore, templates, and values.yaml files. 
 
 The base configuration file is shown here:
-[values.yaml](ClearVision@theEdge/i7e/values.yaml)
+[values.yaml](chart/i7e/values.yaml)
 
 The values.yaml file contains configuration settings for the ClearVision@theEdge application, structured under the i7e key. Here are some of the important sections and parameters found within this file:
 
@@ -54,7 +54,7 @@ The values.yaml file contains configuration settings for the ClearVision@theEdge
 
 - `gpuLimit`: Indicates whether a GPU limit is applied.
 - `cameras`: An array that could be used to configure camera inputs, currently empty.
-- `config`: Contains further configuration settings, which includes ClearVision@theEdge application settings, performance tuning parameters, or environment-specific overrides Parameter level specifics can be found within [values.yaml](ClearVision@theEdge/i7e/values.yaml) config.
+- `config`: Contains further configuration settings, which includes ClearVision@theEdge application settings, performance tuning parameters, or environment-specific overrides Parameter level specifics can be found within [values.yaml](chart/i7e/values.yaml) config.
 
 ### Configuration File Overview
 
