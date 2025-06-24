@@ -9,5 +9,5 @@ name: i7e
 description: ClearObject i7e Helm Chart
 
 type: application
-version: 1.8.6
+version: 1.8.8
 appVersion: "4.0.3"

@@ -1,5 +1,5 @@
 i7e:
-  image: gcr.io/clearvision-edge-prod/i7e/i7e-base@sha256:1596280ec156e2ed11809cd94e6403c1f0c4f6d68d62f01532e60dcfff31dbb6
+  image: gcr.io/clearvision-edge-prod/i7e/i7e-base@sha256:45f8fe8e30250f29e0b066c3bcdaf6f2447cca016e0565b5e1868162f36ea73e
   imagePullPolicy: IfNotPresent
   hostNetwork: true
   serviceAccountJSON: null
